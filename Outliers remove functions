@@ -1,0 +1,29 @@
+def remove_outliers(data, columns, threshold=1.5):
+    """
+    Removes outliers from multiple columns in a Pandas DataFrame using the IQR method.
+    
+    Parameters:
+    data (pd.DataFrame): Input data containing columns with outliers to be removed.
+    columns (list): List of column names to remove outliers from.
+    threshold (float): IQR threshold, default is 1.5.
+    
+    Returns:
+    pd.DataFrame: Dataframe with outliers removed.
+    """
+    
+    # Create a copy of the data to avoid modifying the original DataFrame
+    filtered_data = data.copy()
+    
+    for column in columns:
+        # Calculate the IQR and the lower and upper bounds for the current column
+        Q1 = filtered_data[column].quantile(0.25)
+        Q3 = filtered_data[column].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - threshold * IQR
+        upper_bound = Q3 + threshold * IQR
+        
+        # Remove outliers from the current column
+        filtered_data = filtered_data[(filtered_data[column] >= lower_bound) & (filtered_data[column] <= upper_bound)]
+    
+    # Return the filtered data
+    return filtered_data
